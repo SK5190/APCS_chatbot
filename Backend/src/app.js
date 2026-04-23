@@ -140,7 +140,7 @@ app.get('/api/training', (req, res) => {
     res.json({ trainingData, count: trainingData.length });
 });
 
-const frontendDist = path.resolve(__dirname, '../../Frontend/dist');
+const frontendDist = path.join(__dirname, '../public/app');
 const frontendIndex = path.join(frontendDist, 'index.html');
 if (fs.existsSync(frontendIndex)) {
   app.use(express.static(frontendDist));
@@ -154,7 +154,7 @@ if (fs.existsSync(frontendIndex)) {
 } else {
   app.get('/', (req, res) => {
     res.type('text').send(
-      'API is running. On Render: set Root to repo root, Build to build frontend + backend (see package.json render-build), Start to cd Backend && node server.js — or deploy Frontend as a static site.'
+      'API is running, but the UI bundle is missing. On Render with Root Directory = Backend, set Build Command to: npm install && npm run build  (then redeploy). That builds the React app into Backend/public/app.'
     );
   });
 }

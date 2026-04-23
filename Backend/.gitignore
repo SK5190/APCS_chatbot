@@ -41,3 +41,6 @@ logs
 coverage/
 dist/
 build/
+
+# Vite production build (copied from Frontend; generated on deploy)
+public/app/
