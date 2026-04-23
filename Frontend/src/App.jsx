@@ -4,7 +4,10 @@ import 'react-toastify/dist/ReactToastify.css'
 import './App.css'
 import { io } from "socket.io-client";
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3000'
+/** Same host in production when UI is served by Express; override with VITE_API_URL if API is separate. */
+const API_BASE =
+  import.meta.env.VITE_API_URL?.trim() ||
+  (import.meta.env.PROD ? '' : 'http://localhost:3000')
 /** Fallback if API omits expiresInSeconds (matches backend default) */
 const DEFAULT_SESSION_SEC = 600
 /** v2 keys: invalidates stale sessionStorage from older 60s sessions */

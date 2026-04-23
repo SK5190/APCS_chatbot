@@ -1,3 +1,5 @@
+const path = require('path');
+const fs = require('fs');
 const express = require('express');
 const { isAllowedOrigin } = require('./config/allowedOrigins');
 const { addTrainingData, getTrainingData, trainModel } = require('./service/training.service');
@@ -28,10 +30,6 @@ app.use((req, res, next) => {
 });
 
 app.use(express.json());
-
-app.get('/',(req,res) => {
-    res.send("Working.")
-})
 
 app.get('/api/auth/session-ttl', (req, res) => {
   res.json({ sessionTtlSeconds: SESSION_TTL_SECONDS });
@@ -141,5 +139,24 @@ app.get('/api/training', (req, res) => {
     const trainingData = getTrainingData();
     res.json({ trainingData, count: trainingData.length });
 });
+
+const frontendDist = path.resolve(__dirname, '../../Frontend/dist');
+const frontendIndex = path.join(frontendDist, 'index.html');
+if (fs.existsSync(frontendIndex)) {
+  app.use(express.static(frontendDist));
+  app.get('*', (req, res, next) => {
+    if (req.method !== 'GET' || req.path.startsWith('/api')) return next();
+    if (req.path.startsWith('/socket.io')) return next();
+    const accept = req.get('Accept') || '';
+    if (!accept.includes('text/html')) return next();
+    res.sendFile(frontendIndex);
+  });
+} else {
+  app.get('/', (req, res) => {
+    res.type('text').send(
+      'API is running. On Render: set Root to repo root, Build to build frontend + backend (see package.json render-build), Start to cd Backend && node server.js — or deploy Frontend as a static site.'
+    );
+  });
+}
 
 module.exports = app;
