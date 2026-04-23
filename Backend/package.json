@@ -4,7 +4,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "build": "cd ../Frontend && npm ci && npm run build && cd ../Backend && npm ci",
+    "build": "cd ../Frontend && npm ci && npm run build && node ../Backend/scripts/copy-frontend.js && cd ../Backend && npm ci",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
