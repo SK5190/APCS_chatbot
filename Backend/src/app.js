@@ -144,7 +144,8 @@ const frontendDist = path.join(__dirname, '../public/app');
 const frontendIndex = path.join(frontendDist, 'index.html');
 if (fs.existsSync(frontendIndex)) {
   app.use(express.static(frontendDist));
-  app.get('*', (req, res, next) => {
+  // Express 5 / path-to-regexp rejects app.get('*', …) — use middleware for SPA fallback.
+  app.use((req, res, next) => {
     if (req.method !== 'GET' || req.path.startsWith('/api')) return next();
     if (req.path.startsWith('/socket.io')) return next();
     const accept = req.get('Accept') || '';
